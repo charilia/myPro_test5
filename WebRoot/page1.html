@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>HTML5文字弹幕效果代码</title>
+<style type="text/css">
+*{
+	margin:0;
+	padding:0;
+	list-style: none;
+	border:0;
+}
+body{
+	background: #bcbcbc;
+}
+.main{
+	width: 1440px;
+	height: 800px;
+	margin:0 auto;
+	position: relative;
+}
+.main img{
+	position: absolute;
+	right: 620px;
+	bottom: 300px;
+	width: 250px;
+	height: 250px;
+}
+.main .context{
+	position: absolute;
+    right: 720px;
+    bottom: 100px;
+    width: 100px;
+    height: 10px;
+}
+#canvas{
+	display: block;
+	background: #000;
+	background-image:url(image5.jpg);
+}
+</style>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
+</head>
+<body>
+
+<div class="main">
+	<canvas id="canvas">您的浏览器不支持canvas赶紧去升级吧</canvas>
+	<img src="yuxiangWX.jpg">
+	<div class="context">
+	    <input name="context" id="context" type="text" />
+	    <input type="button" id="addButton" value="添加弹幕" onclick="addContext()" />
+    </div>
+</div>
+
+<script type="text/javascript">
+	var canvas=document.getElementById('canvas');
+	var ctx=canvas.getContext("2d");
+	var width=1440;
+	var height=800;
+	var colorArr=["yellow","pink","orange","red","green","purple","blue","brown"];
+	var textArr=[
+		"信核的兄弟姐妹们，大家好~我叫俞翔 QAQ 2333",
+		"今晚有没有LOL的一块啊？",
+		"无论生理还是心理上有需要的可以加我微信哦，就在屏幕正中央 TAT",
+		"快周末啦，好像睡懒觉~",
+		"有木有爱好电影鉴赏的小伙伴，好莱坞、宝莱坞、天府泰剧、韩剧、动漫......",
+		"你是不是也有种想发弹幕的冲动 QAQ 别刷弹幕刷到自己死机啊233",
+		"觉着这个做的还不错的兄弟姐妹们支持一把咯~",
+		"(￣ε(#￣)☆╰╮(￣▽￣///))"
+	]
+	canvas.width=width;
+	canvas.height=height;
+	var image=new Image();
+
+	ctx.font = "20px Courier New";
+	var numArrL=[500,400,600,300,500,800,30,10];//初始的X
+	var numArrT=[80,100,20,190,550,210,40,120];//初始的Y
+	setInterval(function(){
+	ctx.clearRect(0,0,canvas.width,canvas.height);
+	ctx.save();
+	for(var j=0;j<textArr.length;j++){
+		numArrL[j]-=(j+1)*0.6;
+		ctx.fillStyle = colorArr[j];
+		ctx.fillText(textArr[j],numArrL[j],numArrT[j]);
+	}
+	for(var i=0;i<textArr.length;i++){
+		if(numArrL[i]<=-500){
+			numArrL[i]=canvas.width;
+		}
+	}
+	ctx.restore();
+	},30)
+
+	function addContext(){
+		var context = document.getElementById("context").value;
+		var canvas=document.getElementById('canvas');
+		var ctx=canvas.getContext("2d");
+		var width=1440;
+		var height=800;
+		colorArr.push("white");
+		textArr.push(context);
+		canvas.width=width;
+		canvas.height=height;
+		var image=new Image();
+	
+		ctx.font = "20px Courier New";
+		numArrL.push(1440*Math.random());
+		numArrT.push(800*Math.random());
+		setInterval(function(){
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+		ctx.save();
+		for(var j=0;j<textArr.length;j++){
+			ctx.fillStyle = colorArr[j];
+			ctx.fillText(textArr[j],numArrL[j],numArrT[j]);
+		}
+		for(var i=0;i<textArr.length;i++){
+			if(numArrL[i]<=-500){
+				numArrL[i]=canvas.width;
+			}
+		}
+		ctx.restore();
+		},30);
+		$.ajax({
+			url : 'saveContext.htm',
+			type : 'POST',
+			async : false,
+			data : {name : context},
+			dataType : 'text',
+			success : function(msg) {
+				alert(msg);
+			},
+			error : function(msg) {
+				alert(msg);
+		}
+	});
+	}
+</script>
+</body>
+</html>
